@@ -1,16 +1,5 @@
 /*
-Navicat MySQL Data Transfer
-
-Source Server         : MySQL3306
-Source Server Version : 80015
-Source Host           : localhost:3306
-Source Database       : wj
-
-Target Server Type    : MYSQL
-Target Server Version : 80015
-File Encoding         : 65001
-
-Date: 2020-04-12 09:41:20
+lms schema creation
 */
 
 DROP DATABASE `lms`;
