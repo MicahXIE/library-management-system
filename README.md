@@ -67,7 +67,7 @@ localhost:8080/api/addBook
 POST
 localhost:8080/api/addUser
 {
-	"id": 12345,
+	"id": 123456,
 	"userName": "test",
 	"count": 5
 }
