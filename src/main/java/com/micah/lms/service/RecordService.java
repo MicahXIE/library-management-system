@@ -9,6 +9,8 @@ public interface RecordService {
 	
 	public void addRecord(Record record);
 
+	public Record getRecord(Integer recordId);
+
 	public Record updateRecord(Integer recordId, Record record);
 
 	public List<Record> getAllRecords();

@@ -4,9 +4,9 @@ package com.micah.lms.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,20 +20,21 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 import com.micah.lms.entity.User;
+import com.micah.lms.result.Result;
+import com.micah.lms.result.ResultFactory;
 import com.micah.lms.service.UserServiceImpl;
 
 
 @RestController
 public class UserController {
 	
-	public static final Logger logger = LoggerFactory.getLogger(UserController.class);
+	public static Logger logger = LogManager.getLogger(UserController.class.getName());
 	
 	@Autowired
 	private UserServiceImpl userServiceImpl;
 
 	@RequestMapping(value="/api/users", method=RequestMethod.GET, headers="Accept=application/json")
-    @ResponseBody
-    public ResponseEntity<Object> getAllUsers() {
+    public Result getAllUsers() {
         List<User> userList = userServiceImpl.getAllUsers();
         List<JSONObject> users = new ArrayList<JSONObject>();
 
@@ -45,16 +46,14 @@ public class UserController {
 	        users.add(user);
 	    }
 
-        return new ResponseEntity<Object>(users, HttpStatus.OK);
+        return ResultFactory.buildSuccessResult(users);
     }
 
 	@RequestMapping(value="/api/addUser", method=RequestMethod.POST, headers="Accept=application/json")
-    @ResponseBody
-    public ResponseEntity<User> addUser(@RequestBody User user) {
+    public Result addUser(@RequestBody User user) {
         userServiceImpl.addUser(user);
-        HttpHeaders header=new HttpHeaders();
 
-        return new ResponseEntity<User>(header, HttpStatus.CREATED);
+        return ResultFactory.buildSuccessResult(user);
     }
 	
 }

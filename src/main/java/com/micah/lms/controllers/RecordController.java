@@ -4,9 +4,9 @@ package com.micah.lms.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.micah.lms.entity.Book;
 import com.micah.lms.entity.Record;
 import com.micah.lms.entity.User;
+import com.micah.lms.result.Result;
+import com.micah.lms.result.ResultFactory;
 import com.micah.lms.service.BookServiceImpl;
 import com.micah.lms.service.RecordServiceImpl;
 import com.micah.lms.service.UserServiceImpl;
@@ -32,7 +34,7 @@ import com.micah.lms.utils.StringUtils;
 public class RecordController {
 	
 	private static final int duration = 30;
-	public static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    public static Logger logger = LogManager.getLogger(RecordController.class.getName());
 
 	@Autowired
 	private BookServiceImpl bookServiceImpl;
@@ -44,8 +46,7 @@ public class RecordController {
 	private UserServiceImpl userServiceImpl;
 
 	@RequestMapping(value="/api/records", method=RequestMethod.GET, headers="Accept=application/json")
-    @ResponseBody
-    public ResponseEntity<Object> getAllRecords() {
+    public Result getAllRecords() {
         List<Record> recordList = recordServiceImpl.getAllRecords();
         List<JSONObject> records = new ArrayList<JSONObject>();
 
@@ -60,13 +61,11 @@ public class RecordController {
 	        
 	        records.add(record);
 	    }
-
-        return new ResponseEntity<Object>(records, HttpStatus.OK);
+        return ResultFactory.buildSuccessResult(records);
     }
 
 	@RequestMapping(value="/api/borrow/{userId}/{bookId}", method=RequestMethod.POST, headers="Accept=application/json")
-    @ResponseBody
-    public ResponseEntity<Record> addRecord(@PathVariable("userId") int userId, @PathVariable("bookId") int bookId) {
+    public Result addRecord(@PathVariable("userId") int userId, @PathVariable("bookId") int bookId) {
 
     	Record record = new Record();
         User user = userServiceImpl.getUser(userId);
@@ -74,24 +73,27 @@ public class RecordController {
 
         if (user == null) {
         	logger.error("user {} doesn't exist.", userId);
+            return ResultFactory.buildFailResult("user doesn't exist.");
         }
 
         if (book == null) {
-        	logger.error("book {} doesn't exist.");
+        	logger.error("book {} doesn't exist.", bookId);
+            return ResultFactory.buildFailResult("book doesn't exist.");
         }
 
         int count = user.getCount();
         if (count <= 0) {
         	logger.error("user {} already reach the maximum limit.", user.getId());
+            return ResultFactory.buildFailResult("user reach the maximum limit.");
         } else {
         	user.setCount(count - 1);
         	logger.info("user {} still can borrow {} books.", user.getId(), count - 1);
         }
 
-        //
         boolean available = book.getAvailable();
         if (!available) {
         	logger.error("book {} have already been borrowed ", book.getId());
+            return ResultFactory.buildFailResult("book is not available now.");
         } else {
         	book.setAvailable(false);
         	logger.info("book {} is brrowed successfully.", book.getId());
@@ -109,29 +111,29 @@ public class RecordController {
         bookServiceImpl.updateBook(bookId, book);
         recordServiceImpl.addRecord(record);
 
-        HttpHeaders header=new HttpHeaders();
-
-        return new ResponseEntity<Record>(header, HttpStatus.CREATED);
+        return ResultFactory.buildSuccessResult(record);
     }
 
 	@RequestMapping(value="/api/return/{userId}/{bookId}", method=RequestMethod.POST, headers="Accept=application/json")
-    @ResponseBody
-    public ResponseEntity<Record> updateRecord(@PathVariable("userId") int userId, @PathVariable("bookId") int bookId) {
+    public Result updateRecord(@PathVariable("userId") int userId, @PathVariable("bookId") int bookId) {
     	
         User user = userServiceImpl.getUser(userId);
         Book book = bookServiceImpl.getBook(bookId);
 
         if (user == null) {
         	logger.error("user {} doesn't exist.", userId);
+            return ResultFactory.buildFailResult("user doesn't exist.");
         }
 
         if (book == null) {
         	logger.error("book {} doesn't exist.");
+            return ResultFactory.buildFailResult("book doesn't exist.");
         }
 
         Record record = recordServiceImpl.findRecordByUserBookId(userId, bookId);
         if (record == null) {
-        	logger.error("record doesn't exist.", userId);
+        	logger.error("record doesn't exist.");
+            return ResultFactory.buildFailResult("record doesn't exist.");
         }
 
         int recordId = record.getId();
@@ -146,9 +148,7 @@ public class RecordController {
         bookServiceImpl.updateBook(bookId, book);
         recordServiceImpl.updateRecord(recordId, record);
 
-        HttpHeaders header=new HttpHeaders();
-
-        return new ResponseEntity<Record>(header, HttpStatus.OK);
+        return ResultFactory.buildSuccessResult(recordServiceImpl.getRecord(recordId));
     }
 
 }

@@ -4,9 +4,9 @@ package com.micah.lms.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -21,20 +21,21 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 import com.micah.lms.entity.Book;
+import com.micah.lms.result.Result;
+import com.micah.lms.result.ResultFactory;
 import com.micah.lms.service.BookServiceImpl;
 
 
 @RestController
 public class BookController {
 	
-	public static final Logger logger = LoggerFactory.getLogger(UserController.class);
+	public static Logger logger = LogManager.getLogger(BookController.class.getName());
 	
 	@Autowired
 	private BookServiceImpl bookServiceImpl;
 
 	@RequestMapping(value="/api/books", method=RequestMethod.GET, headers="Accept=application/json")
-    @ResponseBody
-    public ResponseEntity<Object> getAllBooks() {
+    public Result getAllBooks() {
         List<Book> bookList = bookServiceImpl.getAllBooks();
         List<JSONObject> books = new ArrayList<JSONObject>();
 
@@ -50,40 +51,29 @@ public class BookController {
 	        
 	        books.add(book);
 	    }
-
-        return new ResponseEntity<Object>(books, HttpStatus.OK);
+        return ResultFactory.buildSuccessResult(books);
     }
 
 	@RequestMapping(value="/api/addBook", method=RequestMethod.POST, headers="Accept=application/json")
-    @ResponseBody
-    public ResponseEntity<Book> addBook(@RequestBody Book book) {
+    public Result addBook(@RequestBody Book book) {
         bookServiceImpl.addBook(book);
-        HttpHeaders header=new HttpHeaders();
-
-        return new ResponseEntity<Book>(header, HttpStatus.CREATED);
+        return ResultFactory.buildSuccessResult(book);
     }
 
 	@RequestMapping(value="/api/updateBook/{id}", method=RequestMethod.POST, headers="Accept=application/json")
-    @ResponseBody
-    public ResponseEntity<Book> updateBook(@PathVariable("id") int id, @RequestBody Book book) {
+    public Result updateBook(@PathVariable("id") int id, @RequestBody Book book) {
         bookServiceImpl.updateBook(id, book);
-        HttpHeaders header=new HttpHeaders();
-
-        return new ResponseEntity<Book>(header, HttpStatus.OK);
+		return ResultFactory.buildSuccessResult(bookServiceImpl.getBook(id));
     }
 
 	@RequestMapping(value="/api/deleteBook/{id}", method=RequestMethod.POST, headers="Accept=application/json")
-    @ResponseBody
-    public ResponseEntity<Book> deleteBook(@PathVariable("id") int id) {
+    public Result deleteBook(@PathVariable("id") int id) {
         bookServiceImpl.deleteBook(id);
-        HttpHeaders header=new HttpHeaders();
-
-        return new ResponseEntity<Book>(header, HttpStatus.OK);
+        return ResultFactory.buildSuccessResult("delete book " + id + " successfully");
     }
 
 	@RequestMapping(value="/api/book/searchByName/{name}", method=RequestMethod.GET, headers="Accept=application/json")
-    @ResponseBody
-    public ResponseEntity<Object> searchBookByName(@PathVariable("name") String name) {
+    public Result searchBookByName(@PathVariable("name") String name) {
         List<Book> bookList = bookServiceImpl.findByBookName(name);
         List<JSONObject> books = new ArrayList<JSONObject>();
 
@@ -100,12 +90,11 @@ public class BookController {
 	        books.add(book);
 	    }
 
-        return new ResponseEntity<Object>(books, HttpStatus.OK);
+        return ResultFactory.buildSuccessResult(books);
     }
 
 	@RequestMapping(value="/api/book/searchByISBN/{isbn}", method=RequestMethod.GET, headers="Accept=application/json")
-    @ResponseBody
-    public ResponseEntity<Object> searchBookByISBN(@PathVariable("isbn") String isbn) {
+    public Result searchBookByISBN(@PathVariable("isbn") String isbn) {
         List<Book> bookList = bookServiceImpl.findByISBN(isbn);
         List<JSONObject> books = new ArrayList<JSONObject>();
 
@@ -122,7 +111,7 @@ public class BookController {
 	        books.add(book);
 	    }
 
-        return new ResponseEntity<Object>(books, HttpStatus.OK);
+        return ResultFactory.buildSuccessResult(books);
     }
 	
 }
