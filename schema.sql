@@ -14,7 +14,7 @@ SET FOREIGN_KEY_CHECKS=0;
 -- ----------------------------
 DROP TABLE IF EXISTS `book`;
 CREATE TABLE `book` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL,
   `isbn` varchar(255) DEFAULT '',
   `book_name` varchar(255) NOT NULL DEFAULT '',
   `author` varchar(255) DEFAULT '',
@@ -22,7 +22,7 @@ CREATE TABLE `book` (
   `summary` varchar(255) DEFAULT '',
   `available` boolean NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`)
-)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 -- ----------------------------
@@ -34,7 +34,7 @@ CREATE TABLE `user` (
   `user_name` char(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `count` int(11) NOT NULL DEFAULT 5,
   PRIMARY KEY (`id`)
-)ENGINE=InnoDB CHARSET=utf8;
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for user
