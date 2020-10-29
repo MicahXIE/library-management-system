@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,9 @@ import com.micah.lms.utils.StringUtils;
 @RestController
 public class RecordController {
 	
-	private static final int duration = 30;
+    @Value("${book.duration}")
+	private int duration;
+
     public static Logger logger = LogManager.getLogger(RecordController.class.getName());
 
 	@Autowired

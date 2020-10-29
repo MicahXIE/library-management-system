@@ -39,6 +39,11 @@ public class RecordServiceImpl implements RecordService {
 	}
 
 	@Override
+	public void deleteAll() {
+		recordRepository.deleteAll();
+	}
+
+	@Override
 	public Record findRecordByUserBookId(Integer userId, Integer bookId) {
 		Record record = recordRepository.findRecordByUserBookId(userId, bookId);
 		return record;

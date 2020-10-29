@@ -15,6 +15,8 @@ public interface RecordService {
 
 	public List<Record> getAllRecords();
 
+	public void deleteAll();
+
 	public Record findRecordByUserBookId(Integer userId, Integer bookId);
 
 }
