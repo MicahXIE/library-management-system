@@ -24,6 +24,7 @@ import org.springframework.web.context.WebApplicationContext;
 import net.minidev.json.JSONObject;
 
 import com.micah.lms.service.BookServiceImpl;
+import com.micah.lms.service.RecordService;
 import com.micah.lms.service.RecordServiceImpl;
 import com.micah.lms.service.UserServiceImpl;
 
@@ -45,8 +46,9 @@ public class RecordControllerTest {
     @Autowired
 	private UserServiceImpl userServiceImpl;
 
+    // due to transactional annotation, here must autowired interface
 	@Autowired
-	private RecordServiceImpl recordServiceImpl;
+	private RecordService recordServiceImpl;
 
 	@Autowired
 	private BookServiceImpl bookServiceImpl;

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.micah.lms.entity.Record;
 import com.micah.lms.repository.RecordRepository;
@@ -22,11 +23,13 @@ public class RecordServiceImpl implements RecordService {
 	}
 
 	@Override
+	@Transactional
 	public Record getRecord(Integer recordId) {
 		return recordRepository.findOne(recordId);
 	}
 
 	@Override
+	@Transactional
 	public Record updateRecord(Integer recordId, Record record) {
 		return recordRepository.save(record);
 	}

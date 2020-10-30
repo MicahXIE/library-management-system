@@ -26,6 +26,7 @@ import com.micah.lms.entity.User;
 import com.micah.lms.result.Result;
 import com.micah.lms.result.ResultFactory;
 import com.micah.lms.service.BookServiceImpl;
+import com.micah.lms.service.RecordService;
 import com.micah.lms.service.RecordServiceImpl;
 import com.micah.lms.service.UserServiceImpl;
 import com.micah.lms.utils.StringUtils;
@@ -42,8 +43,9 @@ public class RecordController {
 	@Autowired
 	private BookServiceImpl bookServiceImpl;
 	
+    // due to transactional annotation, must autowired interface
 	@Autowired
-	private RecordServiceImpl recordServiceImpl;
+	private RecordService recordServiceImpl;
 
 	@Autowired
 	private UserServiceImpl userServiceImpl;
